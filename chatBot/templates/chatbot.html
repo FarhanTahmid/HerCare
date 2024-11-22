@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HerCare Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(rgba(240, 226, 206, 0.5), rgba(240, 226, 206, 0.5)), url("static/background.jpg");
+            background-color: #F0E2CE;
+        }
+
+        .main-container {
+            display: flex;
+            width: 90%;
+            height: 80%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tasks {
+            flex: 1;
+            background-color: #EC4288;
+            border-right: 1px solid #f3b8f5;
+            padding: 20px;
+            overflow-y: auto;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .tasks h2{
+            color:white;
+        }
+        .tasks h3{
+            color:white;
+        }
+        .tasks li{
+            color:white;
+        }
+        .chat-container {
+            flex: 2;
+            padding: 20px;
+            display: flex;
+            height: 90%;
+            flex-direction: column;
+        }
+
+        .chat-title {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #a34bae;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-title img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 70vh;
+            border: 1px solid #f3b8f5;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffff;
+            border-radius: 10px;
+        }
+
+        /* Scrollbar styles */
+        .messages::-webkit-scrollbar {
+            width: 10px;
+            background-color: #ffe4e1;
+            border-radius: 10px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background-color: #f67cb6;
+            border-radius: 10px;
+            border: 2px solid #ffe4e1;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background-color: #ff4095;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background-color: #ffe4e1;
+            border-radius: 10px;
+        }
+
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+        }
+
+        .user-message {
+            text-align: right;
+            color: #000000;
+            background-color: #ffff;
+            margin-left: auto;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .user-message img {
+            width: 25px;
+            height: 25px;
+            margin-left: 10px;
+        }
+
+        .assistant-message {
+            text-align: left;
+            color: #ffff;
+            background-color: #EC4288;
+            animation: fadeIn 0.5s;
+        }
+
+        .assistant-message img {
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #chat-form {
+            display: flex;
+            margin-top: auto;
+        }
+
+        input[name="user_input"] {
+            flex: 1;
+            margin-right: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #f3b8f5;
+            border-radius: 20px;
+            background-color: #ffe4e1;
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #19305C;
+            color: white;
+            border: 1px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #44174E;
+        }
+
+        button:hover {
+            background-color: #413B61;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .tasks,
+            .chat-container {
+                flex: unset;
+            }
+
+            .tasks {
+                border-radius: 10px 10px 0 0;
+            }
+
+            .messages {
+                max-height: 50vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="tasks">
+            <div id="task-1" class="task active">
+                <h2>TASK 1</h2>
+                <h3>Symptom Inquiry Task</h3>
+                <p>
+                    <ul>
+                        <li>Scenario: “You are experiencing unusual menstrual pain and would like to understand if this is normal or if you should seek medical advice.”</li>
+                        <br>
+                        <li>Ask the chatbot about the causes of menstrual pain and inquire whether you should be concerned.</li>
+                        <br>
+                        <li>Goal: Test the chatbot’s ability to provide relevant, accurate information and advice based on a common health concern.</li>
+                    </ul>
+                </p>
+            </div>
+            <div id="task-2" class="task" style="display: none;">
+                <h2>TASK 2</h2>
+                <h3>Medication Information Task</h3>
+                <p>
+                    <ul>
+                        <li>Scenario: “You have been prescribed a new medication for an intimate health issue and want to know about its potential side effects.”</li>
+                        <br>
+                        <li>Task: Ask the chatbot about the common side effects of the prescribed medication.</li>
+                        <br>
+                        <li>Goal: Test how effectively the chatbot provides accurate medication-related information.</li>
+                    </ul>
+                </p>
+            </div>
+            <div id="task-3" class="task" style="display: none;">
+                <h2>TASK 3</h2>
+                <h3>Privacy Assurance Task</h3>
+                <p>
+                    <ul>
+                        <li>Scenario: “You are concerned about the privacy of your personal health data while using the chatbot. You want to learn how your data will be handled.”</li>
+                        <br>
+                        <li>Task: Ask the chatbot how it protects your personal information and whether your chats are stored.</li>
+                        <br>
+                        <li>Goal: Evaluate the chatbot’s ability to reassure users about privacy and data security.</li>
+                    </ul>
+                </p>
+            </div>
+            <div id="task-4" class="task" style="display: none;">
+                <h2>TASK 4</h2>
+                <h3>Appointment Reminder Task</h3>
+                <p>
+                    <ul>
+                        <li>Scenario: “You have an upcoming gynecologist appointment and want to know how to prepare.”</li>
+                        <br>
+                        <li>Task: Ask the chatbot for tips on what to bring or questions to ask during your appointment.</li>
+                        <br>
+                        <li>Goal: Test the chatbot’s ability to provide helpful, practical information related to healthcare visits.</li>
+                    </ul>
+                </p>
+            </div>
+            <div id="task-5" class="task" style="display: none;">
+                <h2>TASK 5</h2>
+                <h3>Follow-up on a Previous Condition Task</h3>
+                <p>
+                    <ul>
+                        <li>Scenario: “You previously used the chatbot to discuss a yeast infection. Now, you want to ask if it’s normal for the symptoms to last longer than expected.”</li>
+                        <br>
+                        <li>Task: Ask the chatbot about the progression of yeast infection symptoms and whether a follow-up with a healthcare provider is necessary.</li>
+                        <br>
+                        <li>Goal: Assess the chatbot’s ability to remember or reference previous interactions (if designed to do so) or provide general advice for recurring symptoms.</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        <div class="chat-container">
+            <div class="chat-title">
+                <img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" alt="Assistant Avatar">
+                HerCare
+            </div>
+            <div class="messages">
+                <div class="message assistant-message">
+                    <img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" alt="Assistant Avatar">
+                    Hi, how can I assist you today?
+                </div>
+            </div>
+            <form id="chat-form">
+                <input type="text" name="user_input" placeholder="Type your message here..." required>
+                <button type="submit">Send</button>
+            </form>
+            <br>
+            <div>
+                <button id="previousButton" disabled>Previous</button>
+                <button id="skipButton">Skip</button>
+                <button id="nextButton">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = document.querySelectorAll(".task");
+        const messages = document.querySelector(".messages");
+        const chatForm = document.getElementById("chat-form");
+        const userInput = chatForm.querySelector("input[name='user_input']");
+        const previousButton = document.getElementById("previousButton");
+        const nextButton = document.getElementById("nextButton");
+        const skipButton = document.getElementById("skipButton");
+
+        let currentTaskIndex = 0;
+
+        function updateTaskVisibility() {
+            tasks.forEach((task, index) => {
+                task.style.display = index === currentTaskIndex ? "block" : "none";
+            });
+            previousButton.disabled = currentTaskIndex === 0;
+            nextButton.disabled = currentTaskIndex === tasks.length - 1;
+            skipButton.disabled = currentTaskIndex === tasks.length - 1;
+        }
+
+        previousButton.addEventListener("click", () => {
+            if (currentTaskIndex > 0) {
+                currentTaskIndex--;
+                updateTaskVisibility();
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            if (currentTaskIndex < tasks.length - 1) {
+                currentTaskIndex++;
+                updateTaskVisibility();
+            }
+        });
+
+        skipButton.addEventListener("click", () => {
+            if (currentTaskIndex < tasks.length - 1) {
+                currentTaskIndex++;
+                updateTaskVisibility();
+            }
+        });
+
+        async function generateBotResponse(userMessage) {
+
+            try{
+                //get chatbot api
+                const chatbot_api="{{api_url|escapejs}}"+"bot-response/";
+
+                //send a post request
+                const response = await fetch(chatbot_api,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body:JSON.stringify({
+                        message:userMessage,
+                        thread_id:"{{thread_id|escapejs}}",
+                        assistant_id:"{{assistant_id|escapejs}}"
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    return "Sorry, something went wrong!. Please try again.";
+
+                }
+
+                //get response data from api
+                const data = await response.json();
+                const bot_message=data.bot_message;
+                return bot_message;
+
+            }catch(error){
+                console.error('Error fetching bot response:', error);
+                return "Sorry, I couldn't process your request right now. Please try again.";
+            }
+        }
+
+        chatForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userMessage = userInput.value.trim();
+        
+            if (userMessage) {
+                // Add user message to the chatbox
+                const userMessageElement = document.createElement("div");
+                userMessageElement.className = "message user-message";
+                userMessageElement.innerHTML = `${userMessage} <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="User Icon">`;
+                messages.appendChild(userMessageElement);
+        
+                // Create a placeholder for the bot message
+                const botMessageElement = document.createElement("div");
+                botMessageElement.className = "message assistant-message";
+                botMessageElement.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" alt="Assistant Avatar"> Typing...`;
+                messages.appendChild(botMessageElement);
+        
+                messages.scrollTop = messages.scrollHeight;
+        
+                // Clear the user input field
+                userInput.value = "";
+        
+                // Fetch the bot response
+                try {
+                    const botResponse = await generateBotResponse(userMessage);
+                    botMessageElement.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" alt="Assistant Avatar"> ${botResponse}`;
+                } catch (error) {
+                    botMessageElement.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" alt="Assistant Avatar"> Sorry, I couldn't process your request right now. Please try again.`;
+                }
+        
+                messages.scrollTop = messages.scrollHeight;
+            }
+        });    
+        updateTaskVisibility();
+    </script>
+</body>
+
+</html>
