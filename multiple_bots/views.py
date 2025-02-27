@@ -5,12 +5,14 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
-
+from openai import OpenAI
 from .models import Questions, Response
 from .openaiBot import OpenAIBot
 from .llamaBot import LlamaBot
+from .herCareBot import HerCareBot
+import os
+from chatBot.helpers import HelperClass
 # from .services.custom_service import CustomModelService
-
 class IndexView(View):
     """View for the main page"""
     
@@ -37,12 +39,17 @@ class AskQuestionView(View):
         # Create a new question in the database
         question = Questions.objects.create(text=question_text)
         
+        openai_client=OpenAI()
+        assistant_id=os.environ.get('ASSISTANT_ID')
+        # create new thread with helper class
+        new_thread_id=HelperClass.createNewThread(openAI_client=openai_client)
+        
         # Get responses from all AI models in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = {
                 'OPENAI': executor.submit(OpenAIBot.get_response, question_text),
                 'LLAMA': executor.submit(LlamaBot.get_response, question_text),
-                # 'CUSTOM': executor.submit(CustomModelService.get_response, question_text),
+                'CUSTOM': executor.submit(HerCareBot.getResponse,new_thread_id,assistant_id ,question_text),
             }
             
             responses = {}
@@ -94,12 +101,17 @@ class ApiAskQuestionView(View):
             # Create a new question in the database
             question = Questions.objects.create(text=question_text)
             
+            openai_client=OpenAI()
+            assistant_id=os.environ.get('ASSISTANT_ID')
+            # create new thread with helper class
+            new_thread_id=HelperClass.createNewThread(openAI_client=openai_client)
+            
             # Get responses from all AI models in parallel
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = {
                     'OPENAI': executor.submit(OpenAIBot.get_response, question_text),
                     'LLAMA': executor.submit(LlamaBot.get_response, question_text),
-                    # 'CUSTOM': executor.submit(CustomModelService.get_response, question_text),
+                    'CUSTOM': executor.submit(HerCareBot.getResponse,new_thread_id,assistant_id ,question_text),
                 }
                 
                 responses = {}
