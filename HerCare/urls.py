@@ -21,6 +21,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('chatBot.urls',namespace='chatBot')),
+    path('compare-ai/',include('multiple_bots.urls',namespace='multiple_bots')),
     path('api/',include('api.urls',namespace='api')),
     
 ]

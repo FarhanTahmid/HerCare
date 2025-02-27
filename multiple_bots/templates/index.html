@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Response Comparison</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Model Comparison</h1>
+            <p class="subtitle">Ask a question and get responses from multiple AI models</p>
+        </header>
+        
+        <main>
+            <section class="question-section">
+                <form action="{% url 'multiple_bots:ask_question' %}" method="post" id="questionForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="question">Your Question:</label>
+                        <textarea 
+                            id="question" 
+                            name="question" 
+                            rows="5" 
+                            placeholder="Type your question here..."
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Ask AI Models</button>
+                        <div class="loading-indicator hidden" id="loadingIndicator">
+                            <div class="spinner"></div>
+                            <p>Getting responses from AI models...</p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="info-section">
+                <h2>How It Works</h2>
+                <p>This tool sends your question to three different AI models simultaneously:</p>
+                <ul>
+                    <li><strong>OpenAI GPT</strong> - Using the GPT-4o model</li>
+                    <li><strong>Llama</strong> - Meta's open-source large language model</li>
+                    <li><strong>Custom Model</strong> - Our own fine-tuned AI model</li>
+                </ul>
+                <p>Compare responses and see which AI performs best for your needs!</p>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 AI Playground. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="{% static 'main.js' %}"></script>
+</body>
+</html>

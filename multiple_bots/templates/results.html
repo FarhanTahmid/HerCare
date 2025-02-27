@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Response Comparison - Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Model Comparison</h1>
+            <p class="subtitle">Compare responses from multiple AI models</p>
+        </header>
+        
+        <main>
+            <section class="question-display">
+                <h2>Your Question:</h2>
+                <div class="question-box">
+                    <p>{{ question.text }}</p>
+                </div>
+                <a href="{% url 'multiple_bots:index' %}" class="btn btn-outline">Ask Another Question</a>
+            </section>
+            
+            <section class="responses-section">
+                <h2>AI Responses</h2>
+                
+                <div class="response-grid">
+                    <!-- OpenAI Response -->
+                    <div class="response-card">
+                        <div class="response-header">
+                            <h3>OpenAI GPT-4o</h3>
+                            <span class="response-time">{{ responses.OPENAI.time }}s</span>
+                        </div>
+                        <div class="response-content">
+                            <p>{{ responses.OPENAI.text|linebreaksbr }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Llama Response -->
+                    <div class="response-card">
+                        <div class="response-header">
+                            <h3>Llama</h3>
+                            <span class="response-time">{{ responses.LLAMA.time }}s</span>
+                        </div>
+                        <div class="response-content">
+                            <p>{{ responses.LLAMA.text|linebreaksbr }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Model Response -->
+                    {% comment %} <div class="response-card">
+                        <div class="response-header">
+                            <h3>Custom Model</h3>
+                            <span class="response-time">{{ responses.CUSTOM.time }}s</span>
+                        </div>
+                        <div class="response-content">
+                            <p>{{ responses.CUSTOM.text|linebreaksbr }}</p>
+                        </div>
+                    </div> {% endcomment %}
+                </div>
+                
+                <div class="comparison-tools">
+                    <h3>Comparison Tools</h3>
+                    <button id="highlightDifferences" class="btn btn-outline">Highlight Differences</button>
+                    <button id="compareSideBySide" class="btn btn-outline">Compare Side by Side</button>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 AI Playground. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="{% static 'main.js' %}"></script>
+</body>
+</html>
